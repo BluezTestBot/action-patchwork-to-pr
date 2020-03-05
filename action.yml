@@ -1,0 +1,28 @@
+# action.yml
+name: Create PR
+
+description: 'Create Pull Request after reading Patchwork mailing list'
+
+inputs:
+  pw_url:
+    description: Patchwork URL to get patch series
+    required: true
+  pw_exclude_str:
+    description: String in title used to exclude in the list
+    required: true
+  secret_token:
+    description: Secret token
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    ACCESS_TOKEN: ${{ inputs.secret_token }}
+  args:
+    - ${{ inputs.pw_url }}
+    - ${{ inputs.pw_exclude_str }}
+
+branding:
+  icon: 'bluetooth'
+  color: '#0082FC'
