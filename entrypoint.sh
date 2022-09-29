@@ -47,4 +47,4 @@ echo "HUB_PROTOCOL=$HUB_PROTOCOL"
 echo "GITHUB_USER=$GITHUB_USER"
 
 echo "########## RUN ##########"
-/pw-to-pr.py -c /config.json -r $GITHUB_REPOSITORY -b $BASE_BRANCH -k $PW_KEY_STR -s $PWD
+/pw-to-pr.py -c /config.json -r $GITHUB_REPOSITORY -b $BASE_BRANCH -k $PW_KEY_STR -s $PWD -i
