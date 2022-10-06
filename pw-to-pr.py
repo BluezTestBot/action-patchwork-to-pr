@@ -669,10 +669,14 @@ def main():
         series = new_series[id]
         print("\n##### Series: %s #####" % id)
 
-        if not args.ignore_check and series_checked(series):
-            # Check if this series is already checked
-            print("Series is already checked. Skip")
-            continue
+        # if not args.ignore_check and series_checked(series):
+        #     # Check if this series is already checked
+        #     print("Series is already checked. Skip")
+        #     continue
+
+        # Check if this series is already checked.
+        # This may be keep here in case the series is rerun manually
+        already_checked = series_checked(series)
 
         # If the series subject doesn't have the key-str, ignore it.
         # Sometimes, the name have null value. If that's the case, use the
@@ -729,7 +733,10 @@ def main():
                     if args.no_update_check:
                         print("No-Update-Check. Skip pw_submit_check(fail)")
                     else:
-                        pw_submit_check(patch['id'], 3, "pre-ci_am", stderr)
+                        if already_checked:
+                            print("Already checked. Skip pw_submit_check(fail)")
+                        else:
+                            pw_submit_check(patch['id'], 3, "pre-ci_am", stderr)
 
                 # Abort git am
                 git_am_abort(src_dir)
@@ -747,7 +754,10 @@ def main():
                 if args.no_update_check:
                     print("No-Update-Check. Skip pw_submit_check(success)")
                 else:
-                    pw_submit_check(patch['id'], 1, "pre-ci_am", "Success")
+                    if already_checked:
+                        print("Already checked. Skip pw_submit_check(fail)")
+                    else:
+                        pw_submit_check(patch['id'], 1, "pre-ci_am", "Success")
 
         if not verdict:
             print("PRE-CI_AM failed. Notify the submitter")
@@ -756,7 +766,10 @@ def main():
             if args.dry_run:
                 print("Dry-Run. Skip email_compose")
             else:
-                email_compose(config['email'], series, content)
+                if already_checked:
+                    print("Already checked. Skip email_compose")
+                else:
+                    email_compose(config['email'], series, content)
             continue
 
         print("PRE-CI_AM Success. Creating CI for next step")
